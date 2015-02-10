@@ -1,0 +1,55 @@
+Token Type: Statement Character; Token Value: (; Token Length: 1
+Token Type: Integer Operator; Token Value: +; Token Length: 1
+Token Type: Integer; Token Value: 33; Token Length: 2
+Token Type: Integer Operator; Token Value: +; Token Length: 1
+Token Type: Integer Operator; Token Value: +; Token Length: 1
+Token Type: Integer Operator; Token Value: +; Token Length: 1
+Token Type: Integer Operator; Token Value: -; Token Length: 1
+Token Type: Integer Operator; Token Value: -; Token Length: 1
+Token Type: Integer Operator; Token Value: -; Token Length: 1
+Token Type: Float; Token Value: 23.6; Token Length: 4
+Token Type: Identifier; Token Value: e; Token Length: 1
+Token Type: Integer Operator; Token Value: -; Token Length: 1
+Token Type: Integer; Token Value: 8; Token Length: 1
+Token Type: primitive type; Token Value: bool; Token Length: 4
+Token Type: primitive type; Token Value: real; Token Length: 4
+Token Type: primitive type; Token Value: int; Token Length: 3
+Token Type: primitive type; Token Value: string; Token Length: 6
+Token Type: statement keyword; Token Value: if; Token Length: 2
+Token Type: statement keyword; Token Value: let; Token Length: 3
+Token Type: Identifier; Token Value: x4; Token Length: 2
+Token Type: Integer; Token Value: 4; Token Length: 1
+Token Type: Identifier; Token Value: x; Token Length: 1
+Token Type: statement keyword; Token Value: while; Token Length: 5
+Token Type: String; Token Value: "string"; Token Length: 8
+Token Type: String; Token Value: "back to int"; Token Length: 13
+Token Type: bool; Token Value: true; Token Length: 4
+Token Type: bool operator; Token Value: or; Token Length: 2
+Token Type: bool; Token Value: false; Token Length: 5
+Token Type: bool operator; Token Value: and; Token Length: 3
+Token Type: statement keyword; Token Value: stdout; Token Length: 6
+Token Type: Statement Character; Token Value: ); Token Length: 1
+Token Type: Statement Character; Token Value: ); Token Length: 1
+Token Type: Statement Character; Token Value: ); Token Length: 1
+Token Type: Statement Character; Token Value: ); Token Length: 1
+Token Type: Statement Character; Token Value: (; Token Length: 1
+Token Type: Statement Character; Token Value: (; Token Length: 1
+Token Type: Statement Character; Token Value: (; Token Length: 1
+Token Type: Statement Character; Token Value: ); Token Length: 1
+Token Type: Integer Operator; Token Value: *; Token Length: 1
+Token Type: Integer Operator; Token Value: /; Token Length: 1
+Token Type: Integer Operator; Token Value: %; Token Length: 1
+Token Type: Integer Operator; Token Value: ^; Token Length: 1
+Token Type: trig function; Token Value: sin; Token Length: 3
+Token Type: trig function; Token Value: cos; Token Length: 3
+Token Type: trig function; Token Value: tan; Token Length: 3
+Token Type: Identifier; Token Value: sincos; Token Length: 6
+Token Type: Integer Operator; Token Value: >; Token Length: 1
+Token Type: Integer Operator; Token Value: >=; Token Length: 2
+Token Type: Integer Operator; Token Value: >; Token Length: 1
+Token Type: Statement Character; Token Value: :=; Token Length: 2
+Token Type: Integer Operator; Token Value: !=; Token Length: 2
+Token Type: Integer Operator; Token Value: =; Token Length: 1
+Token Type: Integer Operator; Token Value: =; Token Length: 1
+Invalid Character: ]
+End of file

@@ -1,0 +1,48 @@
+Token Type: Identifier; Token Value: hello; Token Length: 5
+Token Type: Identifier; Token Value: world; Token Length: 5
+Token Type: Float; Token Value: 3.0; Token Length: 3
+Token Type: Integer Operator; Token Value: +; Token Length: 1
+Token Type: Integer Operator; Token Value: !=; Token Length: 2
+Token Type: String; Token Value: "afdsdkjfnjhfbgu';;]3[4;[65675*^%*%!#*&($"; Token Length: 42
+Invalid Character: ;
+Token Type: bool; Token Value: true; Token Length: 4
+Token Type: bool operator; Token Value: and; Token Length: 3
+Token Type: Identifier; Token Value: trueand; Token Length: 7
+Token Type: statement keyword; Token Value: if; Token Length: 2
+Token Type: Statement Character; Token Value: :=; Token Length: 2
+Token Type: trig function; Token Value: sin; Token Length: 3
+Token Type: Integer; Token Value: 3; Token Length: 1
+Token Type: primitive type; Token Value: int; Token Length: 3
+Token Type: primitive type; Token Value: real; Token Length: 4
+Token Type: primitive type; Token Value: string; Token Length: 6
+Token Type: Identifier; Token Value: x__testsd__; Token Length: 11
+Token Type: statement keyword; Token Value: while; Token Length: 5
+Token Type: Statement Character; Token Value: (; Token Length: 1
+Token Type: primitive type; Token Value: int; Token Length: 3
+Token Type: Identifier; Token Value: j; Token Length: 1
+Token Type: Integer Operator; Token Value: =; Token Length: 1
+Token Type: Integer Operator; Token Value: =; Token Length: 1
+Token Type: Integer; Token Value: 0; Token Length: 1
+Token Type: Statement Character; Token Value: ); Token Length: 1
+Token Type: Identifier; Token Value: whil; Token Length: 4
+Token Type: Integer Operator; Token Value: >=; Token Length: 2
+Token Type: Identifier; Token Value: ornot; Token Length: 5
+Token Type: bool operator; Token Value: or; Token Length: 2
+Token Type: bool operator; Token Value: not; Token Length: 3
+Token Type: Integer; Token Value: 4; Token Length: 1
+Token Type: Integer Operator; Token Value: *; Token Length: 1
+Token Type: Float; Token Value: 8.5; Token Length: 3
+Token Type: Integer Operator; Token Value: ^; Token Length: 1
+Token Type: Integer Operator; Token Value: /; Token Length: 1
+Token Type: Integer Operator; Token Value: -; Token Length: 1
+Token Type: Integer Operator; Token Value: -; Token Length: 1
+Token Type: Float; Token Value: 10.; Token Length: 3
+Token Type: Float; Token Value: .10; Token Length: 3
+Token Type: Float; Token Value: 1.0; Token Length: 3
+Token Type: Identifier; Token Value: h1n1; Token Length: 4
+Invalid Character: !
+Invalid Character: :
+Token Type: Integer Operator; Token Value: <; Token Length: 1
+Token Type: Integer Operator; Token Value: >=; Token Length: 2
+Token Type: Integer Operator; Token Value: <; Token Length: 1
+End of file
