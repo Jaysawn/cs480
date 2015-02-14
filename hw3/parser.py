@@ -1,7 +1,7 @@
 #Jason Cross
 #Winter 2015
 #CS 480
-#Milestone 2
+#Milestone 3
 
 import sys
 import getopt
@@ -30,12 +30,16 @@ keywords.update({'if':'statement keyword'})
 keywords.update({'while':'statement keyword'})
 keywords.update(stdout='statement keyword')
 
+class Token:
+	def __init__(self, token_type, token_value):
+		self.token_type = token_type
+		self.token_value = token_value
 
+input = 0
 
+def lex():
 
-def lex(inputfile):
-	input = open(inputfile, 'r+')
-
+	return_token = Token('none', 'none')
 
 	while True:
 		cur_token = ''
@@ -45,8 +49,9 @@ def lex(inputfile):
 
 		if not cur_char:
 			#EOF
-			print "End of file"
-			break
+			#print "End of file"
+			return_token.token_type = 'none'
+			return return_token
 
 		#lex code
 		if (' ' == cur_char) or ('\t' == cur_char) or ('\r' == cur_char) or ('\n' == cur_char):
@@ -74,12 +79,14 @@ def lex(inputfile):
 				else:
 					input.seek(-1, 1)
 					print "Invalid Character: " + cur_char
-					continue
+					sys.exit(0)
 
 			else:
 				cur_token = cur_char
 
-			print_token('Integer Operator', cur_token)
+			return_token.token_type = 'Integer Operator'
+			return_token.token_value = cur_token
+			return return_token
 
 		#if number: int or real/float
 		elif (cur_char.isdigit() or cur_ascii == 46):
@@ -108,32 +115,45 @@ def lex(inputfile):
 
 						#as soon as we find a non digit after a decimal, we stop
 						else:
-							print_token('Float', cur_token)
 							input.seek(-1, 1)
-							break
+							return_token.token_type = 'Float'
+							return_token.token_value = cur_token
+							return return_token
 					break	
+				
+				#elif ((cur_ascii == 45) or (cur_ascii == 65)):
+
+
 				#we found something else, so token just the int
 				else:
 					if (cur_token[0] == '.'):
 						#a decimal w/o a proceding value (b/t 0 and 1)
-						print_token("Float", cur_token)
+						input.seek(-1, 1)
+						return_token.token_type = 'Float'
+						return_token.token_value = cur_token
+						return return_token
 					else:
 						#an integer
-						print_token('Integer', cur_token)
-					input.seek(-1, 1)
-					break
+						input.seek(-1, 1)
+						return_token.token_type = 'Integer'
+						return_token.token_value = cur_token
+						return return_token
 
 		#misc statement characters
 		elif (cur_ascii in miscstates):
 			#left paren
 			if (cur_ascii == 40):
 				cur_token = cur_char
-				print_token('Statement Character', cur_token)
+				return_token.token_type = 'Statement Character'
+				return_token.token_value = cur_token
+				return return_token
 
 			#right paren
 			if (cur_ascii == 41):
 				cur_token = cur_char
-				print_token('Statement Character', cur_token)
+				return_token.token_type = 'Statement Character'
+				return_token.token_value = cur_token
+				return return_token
 
 			#assign op :=
 			if (cur_ascii == 58):
@@ -141,11 +161,14 @@ def lex(inputfile):
 				#found :=
 				if (ord(peek) == 61):
 					cur_token = cur_char + peek
-					print_token('Statement Character', cur_token)
+					return_token.token_type = 'Statement Character'
+					return_token.token_value = cur_token
+					return return_token
 
 				else:
 					input.seek(-1, 1)
 					print "Invalid Character: " + cur_char
+					sys.exit(0)
 
 		#string literals
 		elif (cur_ascii == 34) or (cur_ascii == 39):
@@ -159,8 +182,9 @@ def lex(inputfile):
 					#found the matching double quote
 					if (ord(cur_char) == 34):
 						cur_token = cur_token + cur_char
-						print_token('String', cur_token)
-						break
+						return_token.token_type = 'String'
+						return_token.token_value = cur_token
+						return return_token
 
 					#add to the string
 					else:
@@ -174,8 +198,9 @@ def lex(inputfile):
 					#found the matching single quote
 					if (ord(cur_char) == 39):
 						cur_token = cur_token + cur_char
-						print_token('String', cur_token)
-						break
+						return_token.token_type = 'String'
+						return_token.token_value = cur_token
+						return return_token
 
 					#add to the string
 					else:
@@ -201,18 +226,19 @@ def lex(inputfile):
 					#now we need to find out if our current token is:
 					#a keywords
 					if cur_token in keywords:
-						print_token(keywords[cur_token], cur_token)
-						break
+						return_token.token_type = keywords[cur_token]
+						return_token.token_value = cur_token
+						return return_token
 
 					#some identifier
 					else:
-						print_token('Identifier', cur_token)
-						break
+						return_token.token_type = 'Identifier'
+						return_token.token_value = cur_token
+						return return_token
 
 		else:
 			print "Invalid Character: " + cur_char
-
-	input.close()
+			sys.exit(0)
 
 def print_token(token_type, token_value):
 	token_len = len(token_value)
@@ -241,8 +267,34 @@ def isvalidchar(test_char):
 	else:
 		return False
 
+def parse():
+
+	while True:
+		parse_token = lex()
+
+		if (parse_token.token_type == 'none'):
+			#No more tokens
+			print "No more tokens"
+			break
+
+		else:
+
+			print parse_token.token_type
+			print parse_token.token_value
+			#if (
+			if (parse_token.token_value == '('):
+				print "Calling S'"
+
+			#else if const/names
+			elif (parse_token.token_type == 'String') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'Identifier'):
+				print "Calling O'"
+
+			#else error and break
+			else:
+				print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
+
 def usage():
-	print"\n Call python lex.py -s <input_file_name>\n"
+	print"\n Call python parser.py -s <input_file_name>\n"
 
 def main():
     try:
@@ -261,7 +313,10 @@ def main():
             usage()
             sys.exit()
         elif o in ("-s"):
-        	lex(a)
+        	global input
+        	input = open(a, 'r+')
+        	parse()
+        	input.close()
 
         else:
             assert False, "unhandled option"

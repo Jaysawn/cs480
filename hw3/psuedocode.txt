@@ -1,0 +1,72 @@
+S: (S' | name S'' | const S''
+
+S': )S'' | (S')S'' | name S'')S'' | const S'')S'' | stmt) S'' | oper) S''
+
+S'': (S' S'' | name S S'' S'' | const S'' S'' | E
+
+
+S:
+
+	if '(':
+		call S'
+
+	else if 'name':
+		call S''
+
+	else if 'const':
+		call S''
+
+	else:
+		ERROR
+
+
+S':
+
+	if ')':
+		call S''
+
+	else if '(':
+		call S'
+		match )
+		call S''
+
+	else if 'name':
+		call S''
+		match )
+		call S''
+
+	else if 'const':
+		call S''
+		match )
+		call S''
+
+	else if 'stmt':
+		call stmt switch function
+		match )
+		call S''
+
+	else if 'oper':
+		call oper switch function
+		match )
+		call S''
+
+	else:
+		ERROR
+
+
+S'':
+
+	if '(':
+		call S'
+		call S''
+
+	else if 'name':
+		call S''
+		call S''
+
+	else if 'const':
+		call S''
+		call S''
+
+	else:
+		call S
