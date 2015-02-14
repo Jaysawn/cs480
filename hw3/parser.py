@@ -113,15 +113,50 @@ def lex():
 							cur_token = cur_token + cur_char
 							continue
 
+						elif ((cur_ascii == 69) or (cur_ascii == 101)):
+							#add on e
+							cur_token = cur_token + cur_char
+
+							cur_char = input.read(1)
+							cur_ascii = ord(cur_char)
+
+							if ((cur_ascii == 43) or (cur_ascii == 45)):
+								#add on + or -
+								cur_token = cur_token + cur_char
+								continue
+
 						#as soon as we find a non digit after a decimal, we stop
 						else:
 							input.seek(-1, 1)
 							return_token.token_type = 'Float'
 							return_token.token_value = cur_token
-							return return_token
-					break	
+							return return_token	
 				
-				#elif ((cur_ascii == 45) or (cur_ascii == 65)):
+				elif ((cur_ascii == 69) or (cur_ascii == 101)):
+					#add on e
+					cur_token = cur_token + cur_char
+
+					cur_char = input.read(1)
+					cur_ascii = ord(cur_char)
+
+					if ((cur_ascii == 43) or (cur_ascii == 45)):
+						#add on + or -
+						cur_token = cur_token + cur_char
+
+					while True:
+						cur_char = input.read(1)
+
+						#digits after e
+						if cur_char.isdigit():
+							cur_token = cur_token + cur_char
+							continue
+
+						#as soon as we find a non digit after an e, we stop
+						else:
+							input.seek(-1, 1)
+							return_token.token_type = 'Float'
+							return_token.token_value = cur_token
+							return return_token	
 
 
 				#we found something else, so token just the int
