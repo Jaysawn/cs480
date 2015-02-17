@@ -97,6 +97,11 @@ def lex():
 
 			while True:
 				cur_char = input.read(1)
+				if not cur_char:
+					return_token.token_type = 'Integer'
+					return_token.token_value = cur_token
+					return return_token
+
 				cur_ascii = ord(cur_char)
 
 				if cur_char.isdigit():
@@ -110,6 +115,10 @@ def lex():
 
 					while True:
 						cur_char = input.read(1)
+						if not cur_char:
+							return_token.token_type = 'Float'
+							return_token.token_value = cur_token
+							return return_token	
 
 						#digits after decimal
 						if cur_char.isdigit():
@@ -140,6 +149,11 @@ def lex():
 					cur_token = cur_token + cur_char
 
 					cur_char = input.read(1)
+					if not cur_char:
+						return_token.token_type = 'Float'
+						return_token.token_value = cur_token
+						return return_token	
+					
 					cur_ascii = ord(cur_char)
 
 					if ((cur_ascii == 43) or (cur_ascii == 45)):
