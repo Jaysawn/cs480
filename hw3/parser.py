@@ -38,6 +38,7 @@ class Token:
 input = 0
 parse_token = 0
 read_flag = 0
+depth = 0
 
 def lex():
 
@@ -322,13 +323,15 @@ def parse():
 			#if (
 			if (parse_token.token_value == '('):
 				read_flag = 0
-				print parse_token.token_value
+				#print parse_token.token_value
+				print_node()
 				parse1()
 
 			#const/names
 			elif (parse_token.token_type == 'strings') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'Integer') or (parse_token.token_type == 'Float'):
 				read_flag = 0
-				print parse_token.token_value
+				#print parse_token.token_value
+				print_node()
 				parse2()
 
 			#else error and break
@@ -340,6 +343,7 @@ def parse1():
 
 	global parse_token
 	global read_flag
+	global depth
 
 	if read_flag == 0:
 		parse_token = lex()
@@ -351,25 +355,36 @@ def parse1():
 
 	else:
 
+		#depth += 1
+
 		#next token is )
 		if (parse_token.token_value == ')'):
 			read_flag = 0
-			print parse_token.token_value + "hmmm"
+			#print parse_token.token_value
+			#depth -= 1
+			print_node()
 			parse2()
 
 		#next token is (
 		elif (parse_token.token_value == '('):
 			read_flag = 0
-			print parse_token.token_value
+			#print parse_token.token_value
+			depth += 1
+			print_node()
+			#depth += 1
 			parse1()
+			depth -= 1
 			match(')')
 			parse2()
 
 		#const/names
 		elif (parse_token.token_type == 'strings') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'Integer') or (parse_token.token_type == 'Float'):
 			read_flag = 0
-			print parse_token.token_value
+			#print parse_token.token_value
+			depth += 1
+			print_node()
 			parse2()
+			depth -= 1
 			match(')')
 			parse2()
 
@@ -378,13 +393,13 @@ def parse1():
 			read_flag = 0
 			match_stmts()
 			#match(')')
-			
 			parse2()
 
 		#match the proper operator
 		elif (parse_token.token_type == 'oper') or (parse_token.token_type == 'unops') or (parse_token.token_type == 'binops'):
 			read_flag = 0
 			match_oper()
+			#depth -= 1
 			match(')')
 			parse2()
 
@@ -393,35 +408,46 @@ def parse1():
 			print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 			sys.exit(0)
 
+		#depth -= 1
+
 def parse2():
 
 	global parse_token
 	global read_flag
+	global depth
 
 	if read_flag == 0:
 		parse_token = lex()
+
+	#depth += 1
 
 	if (parse_token.token_type == 'none'):
 		return
 
 	elif (parse_token.token_value == '('):
 		read_flag = 0
-		print parse_token.token_value
+		#print parse_token.token_value
+		#depth += 1
+		print_node()
 		parse1()
 		parse2()
 
 	elif (parse_token.token_type == 'strings') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'Integer') or (parse_token.token_type == 'Float'):
 		read_flag = 0
-		print parse_token.token_value
+		#print parse_token.token_value
+		#depth += 1
+		print_node()
+		#depth -= 1
 		parse2()
 		parse2()
 
 	#else fall through
 	else:
-		#print "INVALID Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
-		#sys.exit(0)
 		read_flag = 1
+		#depth -= 1
 		return
+
+	#depth -= 1
 
 def match(terminal):
 	global parse_token
@@ -432,219 +458,325 @@ def match(terminal):
 
 	if (parse_token.token_value == terminal):
 		read_flag = 0
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		return
 
 	else:
-		print "Invalid Token00 - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
+		print "Expected Terminal: " + str(terminal)
+		print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 		sys.exit(0)
 
 def match_oper():
 	global parse_token
+	global read_flag
+	global depth
+
+	depth += 1
 
 	if (parse_token.token_type == 'binops'):
 		#match oper and oper
-		print parse_token.token_value
-		match_nested_oper()
-		match_nested_oper()
+		#print parse_token.token_value
+		print_node()
+
+		if (parse_token.token_value == '-'):
+			match_nested_oper()
+
+			parse_token = lex()
+			if (parse_token.token_value == ')'):
+				read_flag = 1
+
+			else:
+				read_flag = 1
+				match_nested_oper()
+
+		else:
+			match_nested_oper()
+			match_nested_oper()
 
 	elif (parse_token.token_type == 'unops'):
 		#match oper
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_nested_oper()
 
 	elif (parse_token.token_type == 'oper'):
 		#is a :=
 		#match name oper
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_type('name')
 		match_nested_oper()
 
 	else:
-		print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
-		sys.exit(0)		
-
-def match_nested_oper():
-	parse_token = lex()
-
-	if (parse_token.token_type == 'strings') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'Integer') or (parse_token.token_type == 'Float'):
-		#found a valid oper, return
-		print parse_token.token_value
-		return
-
-	#the rest must start with ( and end with a )
-	if (parse_token.token_value != '('):
+		print "Expected Oper"
 		print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 		sys.exit(0)
 
-	print parse_token.token_value
+	depth -= 1	
+
+def match_nested_oper():
+	global parse_token
+	global read_flag
+	global depth
+
+	#print "read Flag: " + str(read_flag)
+	#print "parse token: " + str(parse_token.token_value)
+	if (read_flag == 0):
+		parse_token = lex()
+
+	read_flag = 0
+
+	#depth += 1
+
+	if (parse_token.token_type == 'strings') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'Integer') or (parse_token.token_type == 'Float'):
+		#found a valid oper, return
+		#print parse_token.token_value
+		print_node()
+		#depth -= 1
+		return
+
+	#depth += 1
+
+	#the rest must start with ( and end with a )
+	if (parse_token.token_value != '('):
+		print "Expected ("
+		print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
+		sys.exit(0)
+
+	#print parse_token.token_value
+	print_node()
+
+	depth += 1
 
 	parse_token = lex()
 
 	if (parse_token.token_type == 'binops'):
-		print parse_token.token_value
-		match_nested_oper()
-		match_nested_oper()
+		#match oper and oper
+		#print parse_token.token_value
+		print_node()
+
+		if (parse_token.token_value == '-'):
+			match_nested_oper()
+
+			parse_token = lex()
+			if (parse_token.token_value == ')'):
+				read_flag = 1
+
+			else:
+				read_flag = 1
+				match_nested_oper()
+
+		else:
+			match_nested_oper()
+			match_nested_oper()
 
 	elif (parse_token.token_type == 'unops'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_nested_oper()
 
 	elif (parse_token.token_type == 'oper'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_type('name')
 		match_nested_oper()
 
 	else:
+		print "Expected Nested Oper"
 		print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 		sys.exit(0)
+
+	depth -= 1
 
 	#end if a )
-	parse_token = lex()
+	if (read_flag == 0):
+		parse_token = lex()
+
+	read_flag = 0
 
 	if (parse_token.token_value != ')'):
+		print "Expected ) to finish an oper"
 		print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 		sys.exit(0)
 
-	print parse_token.token_value
+	#print parse_token.token_value
+	print_node()
+	#depth -= 1
 
 def match_stmts():
 	global parse_token
 	global read_flag
+	global depth
+
+	depth += 1
 
 	if (parse_token.token_value == 'stdout'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_nested_oper()
+		depth -= 1
 		match(')')
 
 	elif (parse_token.token_value == 'let'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match('(')
+		depth += 1
 		match_varlist()
+		depth -= 1
 		#let stmt ends with 2 )'s, but the first of the 2 will get matched in match_varlist
 		#if (read_flag == 0):
 		#	match(')')
 		match(')')
 
 	elif (parse_token.token_value == 'if'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_expr()
 		match_expr()
 
 		parse_token = lex()
 
 		if (parse_token.token_value == ')'):
-			print parse_token.token_value
+			#print parse_token.token_value
+			depth -= 1
+			print_node()
 			return
 
 		else:
 			read_flag = 1
 			match_expr()
+			read_flag = 0
+			depth -= 1
 			match(')')
 
 	elif (parse_token.token_value == 'while'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_expr()
 		match_expr()
 		while True:
 			parse_token = lex()
 
-			if (parse_token.token_value == '('):
-				print parse_token.token_value
-				read_flag = 1
-				match_expr()
-
-			elif (parse_token.token_value == ')'):
-				print parse_token.token_value
+			if (parse_token.token_value == ')'):
+				#print parse_token.token_value
+				depth -= 1
+				print_node()
 				break
 
 			else:
-				print "Invalid Token1 - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
-				sys.exit(0)	
+				#print_node()
+				read_flag = 1
+				match_expr()
 
 	else:
-		print "Invalid Token2 - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
-		sys.exit(0)		
+		print "Expected stmt"
+		print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
+		sys.exit(0)	
 
 def match_expr():
 	global parse_token
 	global read_flag
+	global depth
 
 	if (read_flag == 0):
 		parse_token = lex()
 
+	read_flag = 0
+
 	if (parse_token.token_type == 'strings') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'Integer') or (parse_token.token_type == 'Float'):
 		#found a valid oper, return
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		return
 
 	#the rest must start with ( and end with a )
 	if (parse_token.token_value != '('):
-		print "Invalid Token3 - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
+		print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 		sys.exit(0)
 
-	print parse_token.token_value
+	#print parse_token.token_value
+	print_node()
+
+	depth += 1
 
 	parse_token = lex()
 
 	if (parse_token.token_type == 'binops'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_nested_oper()
 		match_nested_oper()
 
 	elif (parse_token.token_type == 'unops'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_nested_oper()
 
 	elif (parse_token.token_type == 'oper'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_type('name')
 		match_nested_oper()
 
 	#handle stmts w/ parens removed
 	elif (parse_token.token_value == 'stdout'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_nested_oper()
 
 	elif (parse_token.token_value == 'let'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match('(')
 		match_varlist()
 
 	elif (parse_token.token_value == 'if'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_expr()
 		match_expr()
 
 		parse_token = lex()
 
 		if (parse_token.token_value == ')'):
-			print parse_token.token_value
+			#print parse_token.token_value
+			depth -= 1
+			print_node()
 			return
 
 		else:
+			#print 'setting read flag to 1'
 			read_flag = 1
 			match_expr()
+			read_flag = 0
 
 	elif (parse_token.token_value == 'while'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		match_expr()
 		match_expr()
 		while True:
 			parse_token = lex()
 
-			if (parse_token.token_value == '('):
-				print parse_token.token_value
+			if (parse_token.token_value == ')'):
+				#print parse_token.token_value
+				depth -= 1
+				print_node()
+				return
+
+			else:
+				#print parse_token.token_value
+				print_node()
 				read_flag = 1
 				match_expr()
 
-			elif (parse_token.token_value == ')'):
-				print parse_token.token_value
-				return
-
 	else:
-		print "Invalid Token4 - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
+		print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 		sys.exit(0)
+
+	depth -= 1
 
 	#end if a )
 	parse_token = lex()
@@ -653,41 +785,56 @@ def match_expr():
 		print "Invalid Token5 - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 		sys.exit(0)
 
-	print parse_token.token_value
-
+	#print parse_token.token_value
+	print_node()
 
 def match_varlist():
 	global parse_token
 	global read_flag
+	global depth
 
 	if (read_flag == 0):
 		match('(')
 	match_type('name')
 	match_type('type')
+	#depth -= 1
 	match(')')
 
 	parse_token = lex()
 
 	if (parse_token.token_value == ')'):
-		print parse_token.token_value
+		#print parse_token.token_value
+		depth -= 1
+		print_node()
 		return
 
 	elif (parse_token.token_value == '('):
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		read_flag = 1
 		match_varlist
 
+	else:
+		print "ERROR"
+
 def match_type(terminal):
+	global parse_token
+
 	parse_token = lex()
 
 	if (parse_token.token_type == terminal):
 		#good, just fall through
-		print parse_token.token_value
+		#print parse_token.token_value
+		print_node()
 		return
 
 	else:
+		print "Expected terminal of type: " + str(terminal)
 		print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 		sys.exit(0)
+
+def print_node():
+	print "\t" * depth + str(parse_token.token_value)
 
 def usage():
 	print"\n Call python parser.py -s <input_file_name>\n"
@@ -710,9 +857,11 @@ def main():
             sys.exit(1)
         elif o in ("-s"):
         	global input
+        	print '====' + str(a) + '===='
         	input = open(a, 'r+')
         	parse()
         	input.close()
+        	print '==============='
 
         else:
             assert False, "unhandled option"
