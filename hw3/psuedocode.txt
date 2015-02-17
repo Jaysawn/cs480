@@ -1,9 +1,12 @@
+Grammar:
+
 S: (S' | name S'' | const S''
 
 S': )S'' | (S')S'' | name S'')S'' | const S'')S'' | stmt) S'' | oper) S''
 
 S'': (S' S'' | name S S'' S'' | const S'' S'' | E
 
+Pseudocode:
 
 S:
 
