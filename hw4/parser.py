@@ -521,14 +521,13 @@ def match_oper():
 			typea = match_nested_oper()
 			typeb = match_nested_oper()
 
-		print typea
-		print typeb
-
 		if (typea == 'Float') and (typeb == 'Float'):
 			if (temp_token.token_value == '!='):
 				output.write('<> ')
 			elif (temp_token.token_value == '%'):
 				output.write('fmod ')
+			elif (temp_token.token_value == '^'):
+				output.write('f** ')
 			else:
 				output.write('f' + temp_token.token_value + ' ')
 
@@ -537,6 +536,8 @@ def match_oper():
 				output.write('<> ')
 			elif (temp_token.token_value == '%'):
 				output.write('mod ')
+			elif (temp_token.token_value == '^'):
+				output.write('s>f s>f fswap f** f>s ')
 			else:
 				output.write(temp_token.token_value + ' ')
 
@@ -546,14 +547,16 @@ def match_oper():
 			else:
 				print "Invalid string operation"
 				sys.exit(0)
-		#we have a float and something or bad code
+		#we have a float and something else or bad code
 		else:
 			if (temp_token.token_value == '!='):
 				output.write('s>f fswap <> ')
 			elif (temp_token.token_value == '%'):
 				output.write('s>f fswap fmod ')
+			elif (temp_token.token_value == '^'):
+				output.write('s>f fswap f** ')
 			else:
-			output.write('s>f fswap f' + temp_token.token_value + ' ')
+				output.write('s>f fswap f' + temp_token.token_value + ' ')
 
 
 	elif (parse_token.token_type == 'unops'):
@@ -571,7 +574,6 @@ def match_oper():
 				output.write('f' + temp_token.token_value + ' ')
 			else:
 				output.write(temp_token.token_value + ' ')
-
 
 
 	elif (parse_token.token_type == 'oper'):
@@ -608,7 +610,11 @@ def match_nested_oper():
 		#found a valid oper, return
 		#print parse_token.token_value
 		print_node()
-		output.write(parse_token.token_value + ' ')
+		if (parse_token.token_type == 'strings'):
+			parse_token.token_value = parse_token.token_value[1:-1]
+			output.write('s" ' + parse_token.token_value + '" ')
+		else:
+			output.write(parse_token.token_value + ' ')
 		#depth -= 1
 		return parse_token.token_type
 
@@ -627,30 +633,91 @@ def match_nested_oper():
 
 	parse_token = lex()
 
+	return_type = 0
+	typea = 0
+	typeb = 0
+	temp_token = parse_token
+
 	if (parse_token.token_type == 'binops'):
 		#match oper and oper
 		#print parse_token.token_value
 		print_node()
 
 		if (parse_token.token_value == '-'):
-			match_nested_oper()
+			typea = match_nested_oper()
 
 			parse_token = lex()
 			if (parse_token.token_value == ')'):
+				if (typea == 'Float'):
+					output.write('f- ')
+				else:
+					output.write('- ')
 				read_flag = 1
 
 			else:
 				read_flag = 1
-				match_nested_oper()
+				typeb = match_nested_oper()
 
 		else:
-			match_nested_oper()
-			match_nested_oper()
+			typea = match_nested_oper()
+			typeb = match_nested_oper()
+
+		if (typea == 'Float') and (typeb == 'Float'):
+			return_type = 'Float'
+			if (temp_token.token_value == '!='):
+				output.write('<> ')
+			elif (temp_token.token_value == '%'):
+				output.write('fmod ')
+			elif (temp_token.token_value == '^'):
+				output.write('f** ')
+			else:
+				output.write('f' + temp_token.token_value + ' ')
+
+		elif (typea == 'Integer') and (typeb == 'Integer'):
+			return_type = 'Integer'
+			if (temp_token.token_value == '!='):
+				output.write('<> ')
+			elif (temp_token.token_value == '%'):
+				output.write('mod ')
+			elif (temp_token.token_value == '^'):
+				output.write('s>f s>f fswap f** f>s ')
+			else:
+				output.write(temp_token.token_value + ' ')
+
+		elif (typea == 'strings') and (typeb == 'strings'):
+			return_type = 'strings'
+			if (temp_token.token_value == '+'):
+				output.write('s+ ')
+			else:
+				print "Invalid string operation"
+				sys.exit(0)
+		#we have a float and something else or bad code
+		else:
+			return_type = 'Float'
+			if (temp_token.token_value == '!='):
+				output.write('s>f fswap <> ')
+			elif (temp_token.token_value == '%'):
+				output.write('s>f fswap fmod ')
+			elif (temp_token.token_value == '^'):
+				output.write('s>f fswap f** ')
+			else:
+				output.write('s>f fswap f' + temp_token.token_value + ' ')
 
 	elif (parse_token.token_type == 'unops'):
 		#print parse_token.token_value
 		print_node()
-		match_nested_oper()
+		typea = match_nested_oper()
+
+		if (temp_token.token_value == 'not'):
+			output.write('invert ')
+		#sin cos or tan
+		else:
+			if (typea == 'Float'):
+				output.write('f' + temp_token.token_value + ' ')
+				return_type = 'Float'
+			else:
+				output.write(temp_token.token_value + ' ')
+				return_type = 'Integer'
 
 	elif (parse_token.token_type == 'oper'):
 		#print parse_token.token_value
@@ -678,7 +745,7 @@ def match_nested_oper():
 
 	#print parse_token.token_value
 	print_node()
-	#depth -= 1
+	return return_type
 
 def match_stmts():
 	global parse_token
@@ -945,24 +1012,30 @@ def main():
     if len(opts)== 0:
         usage()
 
+    global output
+    output = open('gforth.in', 'w')
+
     for o, a in opts:
         if o in ("-h", "--help"):
             usage()
             sys.exit(1)
         elif o in ("-s"):
         	global input
-        	global output
+        	#global output
         	#output_file = a + 
         	print '====' + str(a) + '===='
         	input = open(a, 'r+')
-        	output = open('stutest.out', 'w')
+        	#output = open(a+'.out', 'w')
         	parse()
+        	output.write('\n')
         	input.close()
-        	output.close()
+        	#output.close()
         	print '==============='
 
         else:
             assert False, "unhandled option"
+
+    output.close()
 
 if __name__ == "__main__":
     main()
