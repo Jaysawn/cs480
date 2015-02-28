@@ -488,6 +488,9 @@ def match_oper():
 	global depth
 	global output
 
+	typea = 0
+	typeb = 0
+
 	temp_token = 0
 
 	depth += 1
@@ -500,27 +503,76 @@ def match_oper():
 		temp_token = parse_token
 
 		if (parse_token.token_value == '-'):
-			match_nested_oper()
+			typea = match_nested_oper()
 
 			parse_token = lex()
 			if (parse_token.token_value == ')'):
+				if (typea == 'Float'):
+					output.write('f- ')
+				else:
+					output.write('- ')
 				read_flag = 1
 
 			else:
 				read_flag = 1
-				match_nested_oper()
+				typeb = match_nested_oper()
 
 		else:
-			match_nested_oper()
-			match_nested_oper()
+			typea = match_nested_oper()
+			typeb = match_nested_oper()
 
-		output.write(temp_token.token_value + ' ')
+		print typea
+		print typeb
+
+		if (typea == 'Float') and (typeb == 'Float'):
+			if (temp_token.token_value == '!='):
+				output.write('<> ')
+			elif (temp_token.token_value == '%'):
+				output.write('fmod ')
+			else:
+				output.write('f' + temp_token.token_value + ' ')
+
+		elif (typea == 'Integer') and (typeb == 'Integer'):
+			if (temp_token.token_value == '!='):
+				output.write('<> ')
+			elif (temp_token.token_value == '%'):
+				output.write('mod ')
+			else:
+				output.write(temp_token.token_value + ' ')
+
+		elif (typea == 'strings') and (typeb == 'strings'):
+			if (temp_token.token_value == '+'):
+				output.write('s+ ')
+			else:
+				print "Invalid string operation"
+				sys.exit(0)
+		#we have a float and something or bad code
+		else:
+			if (temp_token.token_value == '!='):
+				output.write('s>f fswap <> ')
+			elif (temp_token.token_value == '%'):
+				output.write('s>f fswap fmod ')
+			else:
+			output.write('s>f fswap f' + temp_token.token_value + ' ')
+
 
 	elif (parse_token.token_type == 'unops'):
 		#match oper
 		#print parse_token.token_value
+		temp_token = parse_token
 		print_node()
-		match_nested_oper()
+		typea = match_nested_oper()
+
+		if (temp_token.token_value == 'not'):
+			output.write('invert ')
+		#sin cos or tan
+		else:
+			if (typea == 'Float'):
+				output.write('f' + temp_token.token_value + ' ')
+			else:
+				output.write(temp_token.token_value + ' ')
+
+
 
 	elif (parse_token.token_type == 'oper'):
 		#is a :=
@@ -558,7 +610,7 @@ def match_nested_oper():
 		print_node()
 		output.write(parse_token.token_value + ' ')
 		#depth -= 1
-		return
+		return parse_token.token_type
 
 	#depth += 1
 
@@ -632,13 +684,22 @@ def match_stmts():
 	global parse_token
 	global read_flag
 	global depth
+	global output
+
+	typea = 0
 
 	depth += 1
 
 	if (parse_token.token_value == 'stdout'):
 		#print parse_token.token_value
 		print_node()
-		match_nested_oper()
+		typea = match_nested_oper()
+		if (typea == 'strings'):
+			output.write('type ')
+		elif (typea == 'Float'):
+			output.write('f. ')
+		else:
+			output.write('. ')
 		depth -= 1
 		match(')')
 
@@ -703,6 +764,9 @@ def match_expr():
 	global parse_token
 	global read_flag
 	global depth
+	global output
+
+	typea = 0
 
 	if (read_flag == 0):
 		parse_token = lex()
@@ -748,7 +812,13 @@ def match_expr():
 	elif (parse_token.token_value == 'stdout'):
 		#print parse_token.token_value
 		print_node()
-		match_nested_oper()
+		typea = match_nested_oper()
+		if (typea == 'strings'):
+			output.write('type ')
+		elif (typea == 'Float'):
+			output.write('f. ')
+		else:
+			output.write('. ')
 
 	elif (parse_token.token_value == 'let'):
 		#print parse_token.token_value
