@@ -1,0 +1,1 @@
+(let ((s1 string) (s2 string))) (:= s1 "hello") (:= s2 "world") ((stdout (+ s1 s2)))

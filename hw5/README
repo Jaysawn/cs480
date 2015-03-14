@@ -1,0 +1,22 @@
+Jason Cross
+CS 480
+Winter 2015
+Milestone 5
+
+My makefile has 4 targets: stutest, bad, proftest, and clean.
+
+The stutest target will run all the tests that should pass, pipe their tree output to stutest.out and write the gforth code to gforth.in. Each test's code output will be separated by ==== lines in stutest.out and by newlines in gforth.in (ie stutest1.in's code on line 1, stutest2.in's code on line 2, and so on).
+
+The bad target will run all the "bad" tests that have something wrong with them and should fail. All these tests will output to the terminal in succession and the output to gforth.in can be ignored. Most of these tests are just syntax errors that are handled, however the most notable bad test is stutestBad1.in, which tries to use a variable without declaring it.
+
+The proftest target will run the proftest file provided by Dr. Parham-Mocello. It's tree output will be piped to proftest.out and the gforth code will be written to gforth.in.
+
+The clean target will delete any .out files as well as gforth.in.
+
+Should you want to run the parser on any custom test files, it can be done as follows:
+
+"python parser.py -s <file1> -s <file2>"
+
+As many files as you want can be supported.
+
+NOTE: Running any make command or running the parser on any of your own files will completely overwrite the contents of gforth.in.

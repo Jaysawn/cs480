@@ -237,7 +237,7 @@ def lex():
 					#found the matching double quote
 					if (ord(cur_char) == 34):
 						cur_token = cur_token + cur_char
-						return_token.token_type = 'strings'
+						return_token.token_type = 'string'
 						return_token.token_value = cur_token
 						return return_token
 
@@ -253,7 +253,7 @@ def lex():
 					#found the matching single quote
 					if (ord(cur_char) == 39):
 						cur_token = cur_token + cur_char
-						return_token.token_type = 'strings'
+						return_token.token_type = 'string'
 						return_token.token_value = cur_token
 						return return_token
 
@@ -345,7 +345,7 @@ def parse():
 				parse1()
 
 			#const/names
-			elif (parse_token.token_type == 'strings') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'int') or (parse_token.token_type == 'real'):
+			elif (parse_token.token_type == 'string') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'int') or (parse_token.token_type == 'real'):
 				read_flag = 0
 				#print parse_token.token_value
 				print_node()
@@ -353,7 +353,7 @@ def parse():
 
 			#else error and break
 			else:
-				print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
+				print "Invalid Token5 - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 				sys.exit(0)
 
 def parse1():
@@ -395,7 +395,7 @@ def parse1():
 			parse2()
 
 		#const/names
-		elif (parse_token.token_type == 'strings') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'int') or (parse_token.token_type == 'real'):
+		elif (parse_token.token_type == 'string') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'int') or (parse_token.token_type == 'real'):
 			read_flag = 0
 			#print parse_token.token_value
 			depth += 1
@@ -449,7 +449,7 @@ def parse2():
 		parse1()
 		parse2()
 
-	elif (parse_token.token_type == 'strings') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'int') or (parse_token.token_type == 'real'):
+	elif (parse_token.token_type == 'string') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'int') or (parse_token.token_type == 'real'):
 		read_flag = 0
 		#print parse_token.token_value
 		#depth += 1
@@ -523,8 +523,8 @@ def match_oper():
 			typea = match_nested_oper()
 			typeb = match_nested_oper()
 
-		print typea
-		print typeb
+		#print typea
+		#print typeb
 
 		if (typea == 'real') and (typeb == 'real'):
 			if (temp_token.token_value == '!='):
@@ -546,7 +546,7 @@ def match_oper():
 			else:
 				output.write(temp_token.token_value + ' ')
 
-		elif (typea == 'strings') and (typeb == 'strings'):
+		elif (typea == 'string') and (typeb == 'string'):
 			if (temp_token.token_value == '+'):
 				output.write('s+ ')
 			else:
@@ -602,7 +602,7 @@ def match_oper():
 			print "Variable: " + variable_name + " used before declared"
 			sys.exit(0)
 		match_nested_oper()
-		output.write(' ' + variable_name + ' !')
+		output.write(variable_name + ' ! ')
 
 	else:
 		print "Expected Oper"
@@ -626,11 +626,11 @@ def match_nested_oper():
 
 	#depth += 1
 
-	if (parse_token.token_type == 'strings') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'int') or (parse_token.token_type == 'real'):
+	if (parse_token.token_type == 'string') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'int') or (parse_token.token_type == 'real'):
 		#found a valid oper, return
 		#print parse_token.token_value
 		print_node()
-		if (parse_token.token_type == 'strings'):
+		if (parse_token.token_type == 'string'):
 			parse_token.token_value = parse_token.token_value[1:-1]
 			output.write('s" ' + parse_token.token_value + '" ')
 		else:
@@ -713,8 +713,8 @@ def match_nested_oper():
 			else:
 				output.write(temp_token.token_value + ' ')
 
-		elif (typea == 'strings') and (typeb == 'strings'):
-			return_type = 'strings'
+		elif (typea == 'string') and (typeb == 'string'):
+			return_type = 'string'
 			if (temp_token.token_value == '+'):
 				output.write('s+ ')
 			else:
@@ -765,7 +765,7 @@ def match_nested_oper():
 		if variable_name not in variables:
 			print "Variable: " + variable_name + " used before declared"
 		match_nested_oper()
-		output.write(' ' + variable_name + ' !')
+		output.write(variable_name + ' ! ')
 
 	else:
 		print "Expected Nested Oper"
@@ -805,7 +805,7 @@ def match_stmts():
 		#print parse_token.token_value
 		print_node()
 		typea = match_nested_oper()
-		if (typea == 'strings'):
+		if (typea == 'string'):
 			output.write('type ')
 		elif (typea == 'real'):
 			output.write('f. ')
@@ -893,11 +893,11 @@ def match_expr():
 
 	read_flag = 0
 
-	if (parse_token.token_type == 'strings') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'int') or (parse_token.token_type == 'real'):
+	if (parse_token.token_type == 'string') or (parse_token.token_type == 'bool') or (parse_token.token_type == 'name') or (parse_token.token_type == 'int') or (parse_token.token_type == 'real'):
 		#found a valid oper, return
 		#print parse_token.token_value
 		print_node()
-		if (parse_token.token_type == 'strings'):
+		if (parse_token.token_type == 'string'):
 			parse_token.token_value = parse_token.token_value[1:-1]
 			output.write('s" ' + parse_token.token_value + '" ')
 		else:
@@ -916,7 +916,7 @@ def match_expr():
 
 	#the rest must start with ( and end with a )
 	if (parse_token.token_value != '('):
-		print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
+		print "Invalid Token2 - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 		sys.exit(0)
 
 	#print parse_token.token_value
@@ -926,46 +926,142 @@ def match_expr():
 
 	parse_token = lex()
 
+	return_type = 0
+	typea = 0
+	typeb = 0
+	typec = 0
+	temp_token = parse_token
+
 	if (parse_token.token_type == 'binops'):
+		#match oper and oper
 		#print parse_token.token_value
 		print_node()
-		match_nested_oper()
-		match_nested_oper()
+
+		if (parse_token.token_value == '-'):
+			typea = match_nested_oper()
+
+			parse_token = lex()
+			if (parse_token.token_value == ')'):
+				if (typea == 'real'):
+					output.write('fnegate')
+				else:
+					output.write('negate')
+				read_flag = 1
+
+			else:
+				read_flag = 1
+				typeb = match_nested_oper()
+
+		else:
+			typea = match_nested_oper()
+			typeb = match_nested_oper()
+
+		if (typea == 'real') and (typeb == 'real'):
+			return_type = 'real'
+			if (temp_token.token_value == '!='):
+				output.write('<> ')
+			elif (temp_token.token_value == '%'):
+				output.write('fmod ')
+			elif (temp_token.token_value == '^'):
+				output.write('f** ')
+			else:
+				output.write('f' + temp_token.token_value + ' ')
+
+		elif (typea == 'int') and (typeb == 'int'):
+			return_type = 'int'
+			if (temp_token.token_value == '!='):
+				output.write('<> ')
+			elif (temp_token.token_value == '%'):
+				output.write('mod ')
+			elif (temp_token.token_value == '^'):
+				output.write('s>f s>f fswap f** f>s ')
+			else:
+				output.write(temp_token.token_value + ' ')
+
+		elif (typea == 'string') and (typeb == 'string'):
+			return_type = 'string'
+			if (temp_token.token_value == '+'):
+				output.write('s+ ')
+			else:
+				print "Invalid string operation"
+				sys.exit(0)
+		#we have a float and something else or bad code
+		#no fswap needed
+		elif (typea == 'real') and (typeb == "int"):
+			if (temp_token.token_value == '!='):
+				output.write('s>f <> ')
+			elif (temp_token.token_value == '%'):
+				output.write('s>f fmod ')
+			elif (temp_token.token_value == '^'):
+				output.write('s>f f** ')
+			else:
+				output.write('s>f f' + temp_token.token_value + ' ')
+		else:
+			return_type = 'real'
+			if (temp_token.token_value == '!='):
+				output.write('s>f fswap <> ')
+			elif (temp_token.token_value == '%'):
+				output.write('s>f fswap fmod ')
+			elif (temp_token.token_value == '^'):
+				output.write('s>f fswap f** ')
+			else:
+				output.write('s>f fswap f' + temp_token.token_value + ' ')
 
 	elif (parse_token.token_type == 'unops'):
 		#print parse_token.token_value
 		print_node()
-		match_nested_oper()
+		typea = match_nested_oper()
+
+		if (temp_token.token_value == 'not'):
+			output.write('invert ')
+		#sin cos or tan
+		else:
+			if (typea == 'real'):
+				output.write('f' + temp_token.token_value + ' ')
+				return_type = 'real'
+			else:
+				output.write(temp_token.token_value + ' ')
+				return_type = 'int'
 
 	elif (parse_token.token_type == 'oper'):
 		#print parse_token.token_value
 		print_node()
-		match_type('name')
+		variable_name = match_type('name')
+		if variable_name not in variables:
+			print "Variable: " + variable_name + " used before declared"
 		match_nested_oper()
+		output.write(variable_name + ' ! ')
 
 	#handle stmts w/ parens removed
 	elif (parse_token.token_value == 'stdout'):
 		#print parse_token.token_value
 		print_node()
 		typea = match_nested_oper()
-		if (typea == 'strings'):
+		if (typea == 'string'):
 			output.write('type ')
 		elif (typea == 'real'):
 			output.write('f. ')
 		else:
 			output.write('. ')
+		#depth -= 1
 
 	elif (parse_token.token_value == 'let'):
 		#print parse_token.token_value
 		print_node()
 		match('(')
+		depth += 1
 		match_varlist()
+		depth -= 1
+		#let stmt ends with 2 )'s, but the first of the 2 will get matched in match_varlist
+		#if (read_flag == 0):
+		#	match(')')
 
 	elif (parse_token.token_value == 'if'):
 		#print parse_token.token_value
 		print_node()
-		match_expr()
-		match_expr()
+		typea = match_expr()
+		output.write('if ')
+		typeb = match_expr()
 
 		parse_token = lex()
 
@@ -973,36 +1069,44 @@ def match_expr():
 			#print parse_token.token_value
 			depth -= 1
 			print_node()
+			output.write('then ')
 			return
 
 		else:
-			#print 'setting read flag to 1'
+			output.write('else ')
 			read_flag = 1
-			match_expr()
+			typec = match_expr()
 			read_flag = 0
+			#depth -= 1
+			output.write('then ')
+
 
 	elif (parse_token.token_value == 'while'):
 		#print parse_token.token_value
 		print_node()
+		output.write('begin ')
 		match_expr()
+		output.write('while ')
 		match_expr()
 		while True:
 			parse_token = lex()
+			#print 'asdf' + parse_token.token_value
 
 			if (parse_token.token_value == ')'):
 				#print parse_token.token_value
 				depth -= 1
 				print_node()
-				return
+				break
 
 			else:
-				#print parse_token.token_value
-				print_node()
+				#print_node()
 				read_flag = 1
 				match_expr()
 
+		output.write('repeat ')
+
 	else:
-		print "Invalid Token - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
+		print "Invalid Token3 - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 		sys.exit(0)
 
 	depth -= 1
@@ -1011,7 +1115,7 @@ def match_expr():
 	parse_token = lex()
 
 	if (parse_token.token_value != ')'):
-		print "Invalid Token5 - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
+		print "Invalid Token4 - Type: " + str(parse_token.token_type) + "; Value: " + str(parse_token.token_value)
 		sys.exit(0)
 
 	#print parse_token.token_value
@@ -1031,6 +1135,7 @@ def match_varlist():
 	variable_name = match_type('name')
 	output.write('variable ' + variable_name + ' ')
 	variable_type = match_type('type')
+	#print variables.items()
 	#if variable already declared, error
 	if variable_name in variables:
 		print "Error, variable: " + variable_name + " already declared."
@@ -1110,6 +1215,7 @@ def main():
         	output.write('\n')
         	input.close()
         	#output.close()
+        	variables.clear()
         	print '==============='
 
         else:

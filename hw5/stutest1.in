@@ -1,0 +1,1 @@
+(let ((var1 int) (var2 real) (var3 bool) (var4 string)))
